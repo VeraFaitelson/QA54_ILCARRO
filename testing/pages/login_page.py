@@ -21,6 +21,9 @@ class LoginPage:
 
     def open_login_page(self):
         self.driver.find_element(*self.LOGIN_LINK).click()
+        WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(self.EMAIL_INPUT)
+        )
 
     def fill_email_field(self, email):
         self.driver.find_element(*self.EMAIL_INPUT).clear()
@@ -30,22 +33,27 @@ class LoginPage:
         self.driver.find_element(*self.PASSWORD_INPUT).clear()
         self.driver.find_element(*self.PASSWORD_INPUT).send_keys(password)
 
+    def fill_login_form(self, user):
+        """Заполняет текстовые поля формы авторизации данными пользователя"""
+        self.fill_email_field(user.email)
+        self.fill_password_field(user.password)
+
     def click_on_login_button(self):
         self.driver.find_element(*self.BUTTON_LOGIN).click()
 
-    def get_modal_title_text(self):
+    def confirmation1(self):
         element = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(self.MODAL_TITLE)
         )
         return element.text
 
-    def get_modal_body_text(self):
+    def confirmation2(self):
         element = WebDriverWait(self.driver, 10).until(
             EC.visibility_of_element_located(self.MODAL_TEXT)
         )
         return element.text
 
-    def click_ok_button_in_modal(self):
+    def close_window(self):
         element = WebDriverWait(self.driver, 10).until(
             EC.element_to_be_clickable(self.MODAL_OK_BUTTON)
         )
@@ -70,6 +78,8 @@ class LoginPage:
         )
         return element.text
 
-    def is_login_button_enabled(self):
-        button = self.driver.find_element(*self.BUTTON_LOGIN)
-        return button.is_enabled()
+    def submit_button_disabled(self):
+        element = WebDriverWait(self.driver, 10).until(
+            EC.visibility_of_element_located(self.BUTTON_LOGIN)
+        )
+        return element.get_attribute("disabled") is not None
